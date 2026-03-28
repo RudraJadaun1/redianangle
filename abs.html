@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radian Concept Simulator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #1e1e2f;
+            color: #ffffff;
+            margin: 0;
+            padding: 30px 20px;
+        }
+
+        h1 {
+            color: #60a5fa;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #9ca3af;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .layout-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 25px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .panel {
+            background-color: #2a2a40;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #3f3f5a;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex: 1 1 300px;
+            max-width: 350px;
+        }
+
+        .explanation h2 {
+            color: #f472b6;
+            margin-top: 0;
+            font-size: 1.4em;
+            border-bottom: 2px solid #3f3f5a;
+            padding-bottom: 10px;
+        }
+
+        .explanation p {
+            color: #d1d5db;
+            line-height: 1.6;
+            font-size: 0.95em;
+            margin: 0;
+        }
+
+        .math-box {
+            background-color: #1e1e2f;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: monospace;
+            color: #4ade80;
+            font-size: 1.1em;
+            border: 1px dashed #4ade80;
+        }
+
+        .canvas-wrapper {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: center;
+            background-color: #2a2a40;
+            border: 2px solid #60a5fa;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            padding: 10px;
+        }
+
+        canvas {
+            background-color: #1e1e2f;
+            border-radius: 8px;
+            max-width: 100%;
+        }
+
+        .slider-container {
+            background-color: #1e1e2f;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #3f3f5a;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: #60a5fa;
+        }
+
+        .legend {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .color-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Radian Concept Visualizer</h1>
+    <div class="subtitle">θ = Arc Length / Radius</div>
+
+    <div class="layout-grid">
+        <div class="panel explanation">
+            <h2>What is a Radian?</h2>
+            <p>A radian is a unit of angle based entirely on the circle's own proportions. Instead of arbitrarily dividing a circle into 360 degrees, radians measure angles by looking at the edge.</p>
+            
+            <p>If you take the <strong>Radius</strong> (the distance from the center to the edge) and bend it along the circle's curve, the distance it covers is the <strong>Arc Length</strong>.</p>
+            
+            <p>The angle created when Arc Length exactly equals the Radius is exactly <strong>1 Radian</strong>.</p>
+            
+            <div class="math-box">
+                Angle (θ) = Arc Length (s) / Radius (r)
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item"><div class="color-box" style="background:#60a5fa;"></div> Radius</div>
+                <div class="legend-item"><div class="color-box" style="background:#f472b6;"></div> Arc Length</div>
+                <div class="legend-item"><div class="color-box" style="background:#4ade80;"></div> Angle</div>
+            </div>
+        </div>
+
+        <div class="canvas-wrapper">
+            <canvas id="simCanvas" width="380" height="380"></canvas>
+        </div>
+
+        <div class="panel">
+            <div class="math-box" style="font-size: 1.3em; margin-bottom: 10px;">
+                <span style="color:#4ade80;">θ</span> = <span style="color:#f472b6;" id="displayArc">0</span> / <span style="color:#60a5fa;" id="displayRad">0</span>
+                <br>
+                <strong>= <span id="displayTheta">0.00</span> rad</strong>
+            </div>
+
+            <div class="math-box" style="font-size: 1em; color: #a78bfa; border-color: #a78bfa;">
+                Degrees: <span id="displayDeg">0.0°</span>
+            </div>
+
+            <div class="slider-container" style="margin-top: 10px;">
+                <div class="slider-header">
+                    <span class="stat-label">Arc Length (s)</span>
+                    <span class="stat-value" style="color: #f472b6;" id="arcVal">100</span>
+                </div>
+                <input type="range" id="arcSlider" min="0" max="628" step="1" value="100">
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-header">
+                    <span class="stat-label">Radius (r)</span>
+                    <span class="stat-value" style="color: #60a5fa;" id="radVal">100</span>
+                </div>
+                <input type="range" id="radSlider" min="50" max="150" step="1" value="100">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        const arcSlider = document.getElementById('arcSlider');
+        const radSlider = document.getElementById('radSlider');
+
+        function draw() {
+            // Get values from sliders
+            const r = parseInt(radSlider.value);
+            let s = parseInt(arcSlider.value);
+
+            // Cap arc length so it doesn't wrap more than 1 full circle for visual clarity
+            const maxArc = 2 * Math.PI * r;
+            if (s > maxArc) {
+                s = maxArc;
+                arcSlider.value = s;
+            }
+            arcSlider.max = Math.floor(maxArc);
+
+            // Calculate angle in radians and degrees
+            const theta = s / r;
+            const degrees = theta * (180 / Math.PI);
+
+            // Update UI Numbers
+            document.getElementById('arcVal').innerText = s;
+            document.getElementById('radVal').innerText = r;
+            document.getElementById('displayArc').innerText = s;
+            document.getElementById('displayRad').innerText = r;
+            document.getElementById('displayTheta').innerText = theta.toFixed(2);
+            document.getElementById('displayDeg').innerText = degrees.toFixed(1) + '°';
+
+            // Clear Canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // 1. Draw base circle (faint)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, r, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#3f3f5a';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 2. Draw Arc Length (Pink)
+            // Start at 0 (right side), go clockwise to theta
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, r, 0, theta);
+            ctx.strokeStyle = '#f472b6';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
+            // 3. Draw Radius Lines (Blue)
+            ctx.beginPath();
+            // Line to starting point (0 degrees)
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + r, centerY);
+            // Line to end point (theta)
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + r * Math.cos(theta), centerY + r * Math.sin(theta));
+            ctx.strokeStyle = '#60a5fa';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // 4. Draw Angle indicator (Green arc in center)
+            if (theta > 0) {
+                ctx.beginPath();
+                const indicatorRadius = Math.min(30, r * 0.4);
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, indicatorRadius, 0, theta);
+                ctx.fillStyle = 'rgba(74, 222, 128, 0.3)';
+                ctx.fill();
+                ctx.strokeStyle = '#4ade80';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        // Add event listeners to redraw when sliders move
+        arcSlider.addEventListener('input', draw);
+        radSlider.addEventListener('input', draw);
+
+        // Initial draw
+        draw();
+    </script>
+</body>
+</html>
