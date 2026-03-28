@@ -208,6 +208,10 @@
         </div>
     </div>
 
+    <div style="margin-top: 30px; text-align: center; font-size: 1em; color: #60a5fa; opacity: 0.8;">
+        ✨ Programmed by Rudra Pratap Singh ✨
+    </div>
+
     <script>
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');
@@ -220,11 +224,9 @@
         const radSlider = document.getElementById('radSlider');
 
         function draw() {
-            // Get values from sliders
             const r = parseInt(radSlider.value);
             let s = parseInt(arcSlider.value);
 
-            // Cap arc length so it doesn't wrap more than 1 full circle for visual clarity
             const maxArc = 2 * Math.PI * r;
             if (s > maxArc) {
                 s = maxArc;
@@ -232,11 +234,9 @@
             }
             arcSlider.max = Math.floor(maxArc);
 
-            // Calculate angle in radians and degrees
             const theta = s / r;
             const degrees = theta * (180 / Math.PI);
 
-            // Update UI Numbers
             document.getElementById('arcVal').innerText = s;
             document.getElementById('radVal').innerText = r;
             document.getElementById('displayArc').innerText = s;
@@ -244,37 +244,29 @@
             document.getElementById('displayTheta').innerText = theta.toFixed(2);
             document.getElementById('displayDeg').innerText = degrees.toFixed(1) + '°';
 
-            // Clear Canvas
             ctx.clearRect(0, 0, width, height);
 
-            // 1. Draw base circle (faint)
             ctx.beginPath();
             ctx.arc(centerX, centerY, r, 0, 2 * Math.PI);
             ctx.strokeStyle = '#3f3f5a';
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // 2. Draw Arc Length (Pink)
-            // Start at 0 (right side), go clockwise to theta
             ctx.beginPath();
             ctx.arc(centerX, centerY, r, 0, theta);
             ctx.strokeStyle = '#f472b6';
             ctx.lineWidth = 6;
             ctx.stroke();
 
-            // 3. Draw Radius Lines (Blue)
             ctx.beginPath();
-            // Line to starting point (0 degrees)
             ctx.moveTo(centerX, centerY);
             ctx.lineTo(centerX + r, centerY);
-            // Line to end point (theta)
             ctx.moveTo(centerX, centerY);
             ctx.lineTo(centerX + r * Math.cos(theta), centerY + r * Math.sin(theta));
             ctx.strokeStyle = '#60a5fa';
             ctx.lineWidth = 3;
             ctx.stroke();
 
-            // 4. Draw Angle indicator (Green arc in center)
             if (theta > 0) {
                 ctx.beginPath();
                 const indicatorRadius = Math.min(30, r * 0.4);
@@ -288,11 +280,9 @@
             }
         }
 
-        // Add event listeners to redraw when sliders move
         arcSlider.addEventListener('input', draw);
         radSlider.addEventListener('input', draw);
 
-        // Initial draw
         draw();
     </script>
 </body>
